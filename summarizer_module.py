@@ -22,11 +22,11 @@ class OpenAISummarizer:
         docs = loader.load()
 
         # Define map and reduce templates
-        map_template = """以下是一份会议记录：\n{docs}\n根据以上会议记录, 以 Markdown 格式为会议进行严谨，严肃，的会议总结，要求按先后顺序列出所有重要信息，要求不要省略任何细节中的信息，要求标注会议发生时间和会议参加人员，要求输出语言与会议文本中的主要语言相同。\n会议报告: \n"""
+        map_template = """以下是一份会议记录：\n{docs}\n,请使用以上记录中的语言（中文或者英文）, 以 Markdown 格式为会议进行严谨，严肃，的会议总结，要求按先后顺序列出所有重要信息，要求不要省略任何细节中的信息，要求标注会议发生时间和会议参加人员，要求输出语言与会议记录文本中的主要语言相同。\n会议报告: \n"""
         map_prompt = PromptTemplate.from_template(map_template)
         map_chain = LLMChain(llm=self.llm, prompt=map_prompt)
         
-        reduce_template = """以下是一份会议总结：\n{doc_summaries}\n根据以上会议记录, 作为一名会议助手，将这些内容合并，不要缩减内容，不要重复的内容，以 Markdown 格式输出，要求不要省略任何细节中的信息，要求输出语言与会议文本中的主要语言相同. \n会议报告:"""
+        reduce_template = """以下是一份会议总结：\n{doc_summaries}\n，请使用以上记录中的语言（中文或者英文）, 作为一名会议助手，将这些内容合并，不要缩减内容，不要重复的内容，以 Markdown 格式输出，要求不要省略任何细节中的信息，要求输出语言与会议文本中的主要语言相同. \n会议报告:"""
         reduce_prompt = PromptTemplate.from_template(reduce_template)
         reduce_chain = LLMChain(llm=self.llm, prompt=reduce_prompt)
 
