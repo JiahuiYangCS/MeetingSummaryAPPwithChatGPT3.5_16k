@@ -1,8 +1,17 @@
-## Meeting Summarizer powered by ChatGPT3.5
+## Meeting Summarizer/Job Description Generater powered by ChatGPT3.5
 
 ## enviroment installation: run "pip install -r requirements.txt" in terminal
 
+## appSummary.py: Meeting Summarizer/Job Description Generater only
+
+## Two Language output: English/Chinese
+
 ## app start: run"python3 appSummary.py" in terminal
+
+## appSummary+seamless.py: Meeting Summarizer/Job Description with SeamlessM4T add on UI
+
+## SeamlessM4T install from: https://github.com/facebookresearch/seamless_communication
+
 
 api_key: openAI api key
 output 0: Display summarized text
@@ -10,3 +19,6 @@ output 2:Temporary file deletion indicator
 Using ChatGPT 3.5 Turbo 16k large language model
 Using the Langchain freamwork with map and reduce summarization methods
 Map and reduce prompt words can be modified in the summarize function of the summarizer_module.py file as needed
+
+# Author: Jiahui Yang
+# Date: 10/12/2023

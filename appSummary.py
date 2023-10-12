@@ -4,60 +4,124 @@ import tempfile
 from summarizer_module import OpenAISummarizer
 from PDFtoTXT_module import pdf_to_txt_file
 
-def summarize_and_cleanup(file, api_key, action, typed_text=None):
-    if action == "Summarize":
-        # Check the file type
-        if file and file.name.endswith('.pdf'):
-            txt_path = pdf_to_txt_file(file.name, 'PDFoutput.txt')
-        else:
-            txt_path = file.name if file else None
+TASK_NAMES = [
+    "Generate English Meeting Summary from recording",
+    "Generate Chinese Meeting Summary from recording",
+    "Generate English Job Description from recording",
+    "Generate Chinese Job Description from recording",
+]
 
-    elif action == "Summary from typed text":
+INPUT_TYPE = [
+    "PDF/text file",
+    "typed text",
+]
+
+def summarize(file, api_key, task, inputType, typed_text=None):
+    
+    if inputType == "PDF/text file" and file:
+        if file.name.endswith('.pdf'):
+            txt_path = pdf_to_txt_file(file.name, 'PDFoutput.txt')
+        elif file.name.endswith('.txt'):
+            txt_path = file.name
+        else:
+            raise ValueError("Unsupported file type. Please upload a PDF or text file.")
+
+    elif inputType == "typed text" and typed_text:
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".txt")
         with open(temp_file.name, 'w', encoding='utf-8') as f:
             f.write(typed_text)
         txt_path = temp_file.name
 
-    summarizer = OpenAISummarizer(api_key)
-    result = summarizer.summarize(txt_path)
+    if not txt_path:
+        raise ValueError("No valid input provided.")
 
+    summarizer = OpenAISummarizer(api_key)
+    
+    if task == "Generate English Meeting Summary from recording":
+        result = summarizer.summarizeEN(txt_path)
+    elif task == "Generate Chinese Meeting Summary from recording":
+        result = summarizer.summarizeCN(txt_path)
+    elif task == "Generate English Job Description from recording":
+        result = summarizer.summarizeJDEN(txt_path)
+    elif task == "Generate Chinese Job Description from recording":
+        result = summarizer.summarizeJDCN(txt_path)
+    else:
+        raise ValueError(f"Unsupported task: {task}")
+
+   
     # Save the result to another temporary file
     summary_file = tempfile.NamedTemporaryFile(delete=False, suffix=".txt")
     with open(summary_file.name, 'w', encoding='utf-8') as f:
         f.write(result)
 
-    return result, summary_file.name, ""
+    return result, summary_file.name
 
 
-title = """
-<strong><span style="font-size: larger;">Meeting Summarizer powered by ChatGPT3.5</span></strong><br>
-<span style="font-size: smaller;">api_key: openAI api key<br>
-output 0: Display summarized text<br>
-output 2: Temporary file deletion indicator<br>
-Using ChatGPT 3.5 Turbo 16k large language model<br>
-Using the Langchain freamwork with map and reduce summarization methods<br>
-Map and reduce prompt words can be modified in the summarize function of the summarizer_module.py file as needed</span>
+DESCRIPTION = """# MeetingSummary/JD Generate
+
+Powered by ChatGPT3.5
+
+api_key: openAI api key
+
+Using ChatGPT 3.5 Turbo 16k large language model
+
+Using the Langchain freamwork with map and reduce summarization methods
+
+Map and reduce prompt words can be modified in the summarize function of the summarizer_module.py file as needed
+
+Input type: PDF, .txt file, and window typing in
+
+"""
+css = """
+h1 {
+  text-align: center;
+}
+
+.contain {
+  max-width: 730px;
+  margin: auto;
+  padding-top: 1.5rem;
+}
 """
 
-# Define the gr.Interface with the provided title
-interface = gr.Interface(
-    
-    fn=summarize_and_cleanup, 
-    inputs=[
-        gr.inputs.File(label="Upload PDF or TXT", optional=True),
-        "text",  # A simple text input for the API key
-        gr.inputs.Dropdown(choices=["Summarize", "Summary from typed text", "Delete Temporary File"], label="Action"),
-        gr.inputs.Textbox(lines=5, placeholder="Type your text here...", label="Typed Text", optional=True)
-    ], 
-    outputs=[
-        "text",  # Display the summary in a textbox
-        gr.outputs.File(label="Download Summary"),  # Allow users to download the output
-        "text"  # Display message after deletion
-    ],
-    live=False,  # Only run the function when the submit button is pressed
-    flagging_options=None,  # Remove the "Flag" button
-    title=title,  # Use the provided title with custom styles
-    layout="unaligned"  # Align content to the left
-)
+with gr.Blocks(css=css) as demo:
+    gr.Markdown(DESCRIPTION)
+    with gr.Group():
+        task = gr.Dropdown(
+            label="Task",
+            choices=TASK_NAMES,
+            value=TASK_NAMES[0]
+        )
+    with gr.Column():
+        inputType = gr.Dropdown(
+            label="INPUT_TYPE",
+            choices=INPUT_TYPE,
+            value="PDF/text file",
+            visible=True
+        )
+        
+    api_key = gr.Textbox(label="openai api key", visible=True)
+        
+    file = gr.inputs.File(label="Upload PDF or TXT",optional=True)
+        
+    typed_text = gr.Textbox(placeholder="Type your text here...", label="Typed Text", optional=True, visible=True)
+        
+    btn = gr.Button("Generate")
+        
+    with gr.Column():
+        output_text = gr.Textbox(label="Translated text")
 
-interface.launch()
+    with gr.Column():
+        output_file = gr.outputs.File(label="Download Summary")# Allow users to download the output
+    
+    btn.click(
+        fn=summarize,
+        inputs=[
+            file, api_key, task, inputType, typed_text,
+        ],
+        outputs=[output_text, output_file],
+        api_name="run",
+    )
+    
+if __name__ == "__main__":
+    demo.queue().launch()
