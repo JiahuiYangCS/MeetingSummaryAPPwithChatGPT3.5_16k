@@ -20,5 +20,10 @@ Using ChatGPT 3.5 Turbo 16k large language model
 Using the Langchain freamwork with map and reduce summarization methods
 Map and reduce prompt words can be modified in the summarize function of the summarizer_module.py file as needed
 
+## available save data in to MongoDB
+# setting MongoDB in the script: appSummary+MongoDB.py,    at top part
+
+
+
 # Author: Jiahui Yang
 # Date: 10/12/2023
