@@ -1,3 +1,5 @@
 gradio
 PyPDF2
 langchain[all]
+openai 
+pymongo
