@@ -2,11 +2,11 @@
 
 ## enviroment installation: run "pip install -r requirements.txt" in terminal
 
-## appSummary.py: Meeting Summarizer/Job Description Generater only
+## lates version is "appSummary+MongoDB.py
 
 ## Two Language output: English/Chinese
 
-## app start: run"python3 appSummary.py" in terminal
+## app start: run" python3 .\appSummary+MongoDB.py" in terminal
 
 ## appSummary+seamless.py: Meeting Summarizer/Job Description with SeamlessM4T add on UI
 
