@@ -70,3 +70,13 @@ class OpenAISummarizer:
         map_template = """以下是一份会议或对话的记录：\n{docs}\n根据以上记录, 以 Markdown 格式为这次会议或对话，提取出一份有关Job Description的所有信息 ，要求不要省略任何细节中的信息，要求标注会议发生时间和会议参加人员，要求输出语言与会议文本中的主要语言相同。\n会议报告: \n"""
         reduce_template = """以下是一份会议或对话的大纲：\n{doc_summaries}\n根据以上记录, 作为一名会议助手，将这些内容合并，不要缩减内容，不要重复的内容，以 Markdown 格式输出一份 Job Description，要求包含：职位标题，摘要，职责和任务，技能和资格，工作地点，截止日期，联系信息等其他。要求不要省略任何细节中的信息，要求使用英文作为输出语言。 \n会议报告:"""
         return self._summarize(inputData, map_template, reduce_template)
+
+    def summarizeCompanyCN(self, inputData):
+        map_template = """以下是一份关于一家公司的描述：\n{docs}\n根据以上内容, 提炼总结公司的基本信息包括：公司情况介绍，商业价值，技术优势，公司的位置，公司的规模，商业模式，市值/融资情况，产品，专利。\n公司介绍: \n"""
+        reduce_template = """以下是一份关于一家公司的描述：：\n{doc_summaries}\n根据以上内容, 作为一名助理，将这些内容合并，不要缩减内容，给出公司信息介绍，按照格式：公司名称： {{名称}} \n 公司情况介绍： {{介绍}} \n  商业价值:{{商业价值}} \n 技术优势:{{技术优势}} \n 公司的位置:{{位置}} \n 公司的规模:{{规模}} \n 商业模式:{{商业模式}} \n 市值/融资情况:{{市值/融资}} \n 产品:{{产品}} \n 专利:{{专利}}\n以 JSON 格式输出，要求使用中文作为输出语言。 """
+        return self._summarize(inputData, map_template, reduce_template)
+
+    def summarizeCompanyEN(self, inputData):
+        map_template = """以下是一份关于一家公司的描述：\n{docs}\n根据以上内容, 提炼总结公司的基本信息包括：公司情况介绍，商业价值，技术优势，公司的位置，公司的规模，商业模式，市值/融资情况，产品，专利。\n公司介绍: \n"""
+        reduce_template = """以下是一份关于一家公司的描述：：\n{doc_summaries}\n根据以上内容, 作为一名助理，将这些内容合并，不要缩减内容，给出公司信息介绍，按照格式：公司名称： {{名称}} \n 公司情况介绍： {{介绍}} \n  商业价值:{{商业价值}} \n 技术优势:{{技术优势}} \n 公司的位置:{{位置}} \n 公司的规模:{{规模}} \n 商业模式:{{商业模式}} \n 市值/融资情况:{{市值/融资}} \n 产品:{{产品}} \n 专利:{{专利}}\n以 JSON 格式输出，要求使用英文作为输出语言。 """
+        return self._summarize(inputData, map_template, reduce_template)
